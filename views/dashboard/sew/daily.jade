@@ -1,0 +1,793 @@
+extends ./layout
+
+block page-body
+  - for(var ppp = 0; ppp < role.length; ppp++){
+    - if(role[ppp].page == 7 && role[ppp].w == 1){
+        .panel.panel-default.add-panel(style='display:none;')
+          .panel-heading
+            | #{__('ADD')} #{__('DATA')}
+          .panel-body
+            form.add-form
+              .row                
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('LINE')}#
+                  select.select-bar.new-line(style='width: 100%;')
+                    option(value='-1') Not Selected
+                    - for(var i = 0; i < lines.length; i++){
+                        option(value = '#{lines[i].id}') #{lines[i].name}
+                    - }
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('FILE')}#
+                  select.select-bar.new-file(style='width: 100%;')
+                    option(value='-1') Not Selected
+                    - for(var i = 0; i < orders.length; i++){
+                        option(value = '#{orders[i].id}') #{orders[i].name}
+                    - }
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('PO')}
+                  select.select-bar.new-po(style='width: 100%;')
+                    option(value='-1') Not Selected
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("COLOR")}
+                  select.select-bar.new-color(style='width: 100%;')
+                    option(value='-1') Not Selected            
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("COLOR CODE")}
+                  select.select-bar.new-colorcode(style='width: 100%;')
+                    option(value='-1') Not Selected
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('Size')}
+                  select.select-bar.new-size(style='width: 100%;')
+                    option(value='-1') Not Selected
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('INVOICE')}$
+                  input.form-control.new-invoice(type='text', placeholder='Invoice#')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('DATE')}
+                  input.form-control.new-date(type='text', placeholder='Please choose a date...', data-format='YYYY-MM-DD')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('LETRA')}
+                  input.form-control.new-letra(type='text', placeholder='LETRA')                
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('PRIMERAS')}
+                  input.form-control.new-primeras(type='text', placeholder='PREMERAS')
+                .form-group.clearfix.col-md-2
+                  label.display-block Days of Production
+                  input.form-control.new-p_day(type='text', placeholder='Days of Production')
+                .form-group.clearfix.col-md-2
+                  label.display-block Operations
+                  input.form-control.new-operation(type='text', placeholder='Operations')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('SEG')}
+                  input.form-control.new-seg(type='text', placeholder='SEG.')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('NO')}/#{__('CONF')}.
+                  input.form-control.new-conf(type='text', placeholder='NO/CONF.')
+                .form-group.col-md-12
+                  button.btn.btn-sm.btn-success.pull-right(type='submit') #{__('Add')} #{__('Data')}                  
+        .panel.panel-default.update-panel(style='display:none;')
+          .panel-heading
+            | #{__('UPDATE')} #{__('DATA')}
+          .panel-body
+            form.update-form
+              .row
+                input(type = 'hidden').oldpo
+                input(type = 'hidden').oldline
+                input(type = 'hidden').oldsize
+                input(type = 'hidden').olddate
+                input(type = 'hidden').oldletra
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('LINE')}#
+                  select.select-bar.update-line(style='width: 100%;')
+                    - for(var i = 0; i < lines.length; i++){
+                        option(value = '#{lines[i].id}') #{lines[i].name}
+                    - }
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('FILE')}#
+                  select.select-bar.update-file(style='width: 100%;')
+                    option(value='-1') Not Selected
+                    - for(var i = 0; i < orders.length; i++){
+                        option(value = '#{orders[i].id}') #{orders[i].name}
+                    - }
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('PO')}
+                  select.select-bar.update-po(style='width: 100%;')
+                    option(value='-1') Not Selected
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("COLOR")}
+                  select.select-bar.update-color(style='width: 100%;')
+                    option(value='-1') Not Selected            
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("COLOR CODE")}
+                  select.select-bar.update-colorcode(style='width: 100%;')
+                    option(value='-1') Not Selected
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('Size')}
+                  select.select-bar.update-size(style='width: 100%;')
+                    option(value='-1') Not Selected
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('Invoice')}$
+                  input.form-control.update-invoice(type='text', placeholder='Invoice#')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('DATE')}
+                  input.form-control.update-date(type='text', placeholder='Please choose a date...', data-format='YYYY-MM-DD')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('LETRA')}
+                  input.form-control.update-letra(type='text', placeholder='LETRA')                
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('PRIMERAS')}
+                  input.form-control.update-primeras(type='text', placeholder='PRIMERAS')
+                .form-group.clearfix.col-md-2
+                  label.display-block Days of Production
+                  input.form-control.update-p_day(type='text', placeholder='Days of Production')
+                .form-group.clearfix.col-md-2
+                  label.display-block Operations
+                  input.form-control.update-operation(type='text', placeholder='Operations')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('SEG')}
+                  input.form-control.update-seg(type='text', placeholder='SEG.')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__('NO')}/#{__('CONF')}.
+                  input.form-control.update-conf(type='text', placeholder='NO/CONF.')
+                .form-group.col-md-12
+                  button.btn.btn-sm.btn-success.pull-right(type='submit') #{__('Update')} #{__('Data')}
+                  - for(var qqqq = 0; qqqq < role.length; qqqq++){
+                    - if(role[qqqq].page == 7 && role[qqqq].d == 1){
+                        .btn.btn-sm.btn-success.pull-right.remove(style='margin-right: 20px;') #{__('Remove')} #{__('Data')}
+                    - }
+                  - }
+    - }
+  - }
+  .panel.panel-default.sew-list-panel
+    .panel-body
+      .align-justify
+        - for(var ppp = 0; ppp < role.length; ppp++){
+          - if(role[ppp].page == 7 && role[ppp].w == 1){
+              .p-b-10
+                button.btn.btn-sm.btn-success.add-data
+                  i.fa.fa-plus.m-r-5
+                  | #{__('Add')} #{__('New')} #{__('Data')}
+                button.btn.btn-sm.btn-success.upload-excel.pull-right(onclick="$('.inputexcelfile').click();")
+                  i.fa.fa-plus.m-r-5
+                  | #{__('Upload')} #{__('Excel')}                        
+                form.upload-excel-form
+                  input.hide.inputexcelfile(type="file", accept=".xlsx", onchange="uploadExcel()", name="excel")
+          - }
+        - }
+      table.table.table-striped.table-hover.sew-table
+        thead
+          tr
+            th #{__('DATE')}
+            th #{__('Line')}            
+            th #{__('File')}#
+            th #{__('PO')}#
+            th #{__('COLOR')}
+            th #{__('Size')}
+            th #{__('INVOICE')}
+            th #{__('LETRA')}
+            th #{__('PRIMERAS')}
+            th #{__('DAYS OF PRODUCTION')}
+            th #{__('#OPERATIONS')}
+            th #{__('SEG.')}
+            th #{__('NO')}/#{__('CONF')}
+        tbody
+      h4(style="display: inline-block", class="pull-right") TOTAL PRIMERAS&nbsp
+        .total(style="display: inline-block")
+        &nbsp&nbsp&nbsp&nbsp
+      h4(style="display: inline-block", class="pull-right") TOTAL SEG&nbsp
+        .total_seg(style="display: inline-block")
+        &nbsp&nbsp&nbsp&nbsp
+      h4(style="display: inline-block", class="pull-right") TOTAL CONF&nbsp
+        .total_conf(style="display: inline-block")
+        &nbsp&nbsp&nbsp&nbsp
+block script2
+  script.
+    // Left Menu
+    $('.m-daily-production').addClass('active');
+
+    function init(){
+      jQuery.fn.dataTableExt.oSort["duration-desc"] = function (x, y) {
+        var tmp1 = Number(x.toString().split(' ')[1]);
+        var tmp2 = Number(y.toString().split(' ')[1]);
+        if(tmp2 == undefined || tmp1 == undefined) return 1;
+        return ((tmp1 < tmp2) ? 1 : ((tmp1 > tmp2) ?  -1 : 0));        
+      };
+      jQuery.fn.dataTableExt.oSort["duration-asc"] = function (x, y) {        
+        var tmp1 = Number(x.toString().split(' ')[1]);
+        var tmp2 = Number(y.toString().split(' ')[1]);
+        if(tmp2 == undefined || tmp1 == undefined) return 1;
+        return ((tmp1 < tmp2) ? -1 : ((tmp1 > tmp2) ?  1 : 0));        
+      }
+      $('.sew-table').DataTable({
+        "pageLength": 50,
+        "order": [[ 0, "asc" ], [ 1, "asc" ], [ 2, "asc" ], [ 3, "asc" ]],
+        "aoColumns": [
+          {}, 
+          {
+            "bSortable": true,
+            "sType": "duration"
+          }, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
+        ],
+        responsive: true,
+        dom: '<"html5buttons"B>lTfgtip',
+        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+      });
+      
+
+      $('.select-bar').select2();
+      $(".new-date").datetimepicker({
+        format: 'YYYY-MM-DD',
+        showClear: true
+      });
+      $(".update-date").datetimepicker({
+        format: 'YYYY-MM-DD',
+        showClear: true
+      });
+
+      $('.add-panel').on('click', 'a.panel-close', function () {
+        $(this).parents('.add-panel').fadeOut();
+      });
+      $('.update-panel').on('click', 'a.panel-close', function () {
+        $(this).parents('.update-panel').fadeOut();
+      });
+      $('.add-data').on('click', function(){
+        $('.add-panel').fadeIn();
+        $('.update-panel').fadeOut();
+      })
+
+      var b1 = true;
+      var b2 = true;
+      $('.new-color').on('change', function(){
+        if(b2){
+          b1 = false;
+          $('.new-colorcode').val($(this).val()).trigger('change');        
+        }
+        b2 = true;
+      })
+      $('.new-colorcode').on('change', function(){
+        if(b1){
+          b2 = false;
+          $('.new-color').val($(this).val()).trigger('change');
+        }
+        b1 = true;
+      })
+
+      var b1 = true;
+      var b2 = true;
+      $('.update-color').on('change', function(){
+        if(b2){
+          b1 = false;
+          $('.update-colorcode').val($(this).val()).trigger('change');        
+        }
+        b2 = true;
+      })
+      $('.update-colorcode').on('change', function(){
+        if(b1){
+          b2 = false;
+          $('.update-color').val($(this).val()).trigger('change');
+        }
+        b1 = true;
+      })
+    }
+    init();
+
+    var orderdetails, orders = (!{JSON.stringify(orders)}), lines = (!{JSON.stringify(lines)});
+    
+    $('.new-file').on('change', function(data){
+      $.ajax({
+        url: '/dashboard/sew/orderdetail',
+        type: 'POST',
+        data: {
+          orderid: $(this).val()
+        },
+        success: function(result){
+          if(result.isSuccess){
+            orderdetails = result.data;
+            $(".new-po").select2("destroy");
+            $('.new-po').html("");
+            $('.new-po').append(
+                '<option value="-1">Not Selected</option>'
+            );
+            var tmp = [];
+            $.each(orderdetails, function(index, value) {
+              if(!tmp.includes(orderdetails[index].po)){
+                tmp.push(orderdetails[index].po);
+                $('.new-po').append(
+                  '<option value="' + orderdetails[index].id + '">' + orderdetails[index].po + '</option>'
+                );
+              }
+            });
+            $(".new-po").select2();
+            
+            $('.new-po').on('change', function(){
+              var po = $(this).val();
+              console.log(po);
+              $(".new-color").select2("destroy");
+              $('.new-color').html("");
+              $('.new-color').append(
+                  '<option value="-1">Not Selected</option>'
+              );
+              var colorname = [];
+              for(var index = 0; index < orderdetails.length; index++){
+                if(po != orderdetails[index].id) continue;
+                if(!colorname.includes(orderdetails[index].colorname)){                  
+                  $('.new-color').append(
+                    '<option value="' + orderdetails[index].color + '">' + orderdetails[index].colorname + '</option>'
+                  );
+                  colorname.push(orderdetails[index].colorname);
+                }
+              }
+              $(".new-color").select2();
+              $(".new-colorcode").select2("destroy");
+              $('.new-colorcode').html("");
+              $('.new-colorcode').append(
+                  '<option value="-1">Not Selected</option>'
+              );
+              var colorcode = [];
+              for(var index = 0; index < orderdetails.length; index++) {
+                if(po != orderdetails[index].id) continue;
+
+                if(!colorcode.includes(orderdetails[index].color)){
+                  $('.new-colorcode').append(
+                    '<option value="' + orderdetails[index].color + '">' + orderdetails[index].color + '</option>'
+                  );
+                  colorcode.push(orderdetails[index].color);
+                }                
+              };
+              $(".new-colorcode").select2();
+            })
+          }else{
+            alert('Cannot load Orderdetail. Please contact support team.')
+          }
+        }
+      })
+
+      loadSizeList($(this).val());
+    })
+
+    var loadSizeList = function(orderid){
+      for(var i = 0; i < orders.length; i++){
+        if(orders[i].id == orderid){
+          $.ajax({
+            url: '/dashboard/sew/size_list',
+            type: 'POST',
+            data: {
+              sizegroup: orders[i].sizegroup
+            },
+            success: function(data){
+              if(data.isSuccess){
+                //Add - Form
+                $(".new-size").select2("destroy");
+                $('.new-size').html("");
+                $('.new-size').append(
+                    '<option value="-1">Not Selected</option>'
+                );
+                sizes = data.list;
+                $.each(sizes, function(index, value) {
+                  $('.new-size').append(
+                    '<option value="' + sizes[index].id + '">' + sizes[index].name + '</option>'
+                  );
+                });
+                $(".new-size").select2();
+
+                //Update - Form
+                $(".update-size").select2("destroy");
+                $('.update-size').html("");
+                $('.update-size').append(
+                    '<option value="-1">Not Selected</option>'
+                );
+                sizes = data.list;
+                $.each(sizes, function(index, value) {
+                  if(bfirst2 == true && sizes[index].name == oldsize){
+                    $('.oldsize').val(sizes[index].id);
+                    $('.update-size').append(
+                      '<option value="' + sizes[index].id + '" selected>' + sizes[index].name + '</option>'
+                    );
+                    bfirst2 = false;
+                  }
+                });
+                $(".update-size").select2();
+                
+              }else{
+                alert('Cannot load SizeGroup');
+              }
+            }
+          })
+        }
+      }      
+    }
+    
+    $('.add-form').submit(function(e){
+      e.preventDefault();
+      let po;
+      for(var i = 0; i < orderdetails.length; i++){
+        if(orderdetails[i].po == $('.new-po').select2('data')[0].text && orderdetails[i].colorname == $('.new-color').select2('data')[0].text){
+          po = orderdetails[i].id;
+        }
+      }
+      if($('.new-file').val() == -1){
+        alert('Please choose file.');
+        return;
+      }else if($('.new-line').val() == -1){
+        alert('Please choose Line.');
+        return;
+      }else if($('.new-po').val() == -1){
+        alert('Please choose PO.');
+        return;
+      }else if($('.new-color').val() == -1){
+        alert('Please choose color.');
+        return;
+      }else if($('.new-size').val() == -1){
+        alert('Please choose size.');
+        return;
+      }else if($('.new-date').val() == ''){
+        alert('Please choose Date').
+        return;
+      }
+
+      $.ajax({
+        url: '/dashboard/sew/daily/add',
+        type: 'POST',
+        data: {
+          line: $('.new-line').val(),
+          po: po,
+          size: $('.new-size').val(),
+          invoice: $('.new-invoice').val(),
+          date: $('.new-date').val(),
+          letra: $('.new-letra').val(),
+          primeras: $('.new-primeras').val(),
+          seg: $('.new-seg').val(),
+          conf: $('.new-conf').val(),
+          p_day: $('.new-p_day').val(),
+          operation: $('.new-operation').val()
+        },
+        success: function(result){
+          if(result.isSuccess){
+            var tableData = [];
+            tableData.push([
+              $('.new-date').val(), $('.new-line').select2('data')[0].text, 
+              $('.new-file').select2('data')[0].text, $('.new-po').select2('data')[0].text,
+              $('.new-color').select2('data')[0].text, $('.new-size').select2('data')[0].text,
+              $('.new-invoice').val(), $('.new-letra').val(), $('.new-primeras').val(),
+              $('.new-p_day').val(), $('.new-operation').val(),
+              $('.new-seg').val(), $('.new-conf').val()
+            ]);
+            $('.sew-table').dataTable().fnAddData(tableData);
+            $('.sew-table').dataTable().fnDraw();
+
+            $('.new-date').val(''); $('.new-letra').val(''); $('.new-primeras').val('');
+            $('.new-invoice').val(''); $('.new-seg').val(''); $('.new-conf').val('');
+            $('.new-p_day').val(''); $('.new-operation').val();
+            refreshEvent();
+          }else{
+            alert('Same Detail(Line, PO, Size exist. Please check detail.');
+          }
+        }
+      })
+    })
+
+    var alllist;
+    $('.search-form').submit(function(e){
+      e.preventDefault();
+      $('.lds-spinner').fadeIn();
+      $.ajax({
+        url: '/dashboard/sew/daily/list',
+        type: 'POST',
+        data: {
+          buyer: $('.buyer').val(),
+          date: $('.in-date').val(),
+          line: $('.line').val(),
+          color: $('.color').val(),
+          po: $('.po').val(),
+          file: $('.file').val(),
+          invoice: $('.invoice').val()
+        },
+        success: function(data){
+          $('.lds-spinner').fadeOut();
+          console.log(data);
+          var total = 0, total_seg = 0, total_conf = 0;
+          if(data.isSuccess){
+            alllist = data.list;
+            var tableData = [];
+            for(var i = 0; i < data.list.length; i++){
+              var ordername, linename;
+              for(var j = 0; j < orders.length; j++){
+                if(orders[j].id == data.list[i].orderid)
+                  ordername = orders[j].name;
+              }
+              for(var j = 0; j < lines.length; j++){
+                if(lines[j].id == data.list[i].line){
+                  linename = lines[j].name;
+                }
+              }
+              total += Number(data.list[i].primeras);
+              total_seg += Number(data.list[i].seg);
+              total_conf += Number(data.list[i].conf);
+              tableData.push([
+                data.list[i].date, linename, ordername, data.list[i].po, data.list[i].colorname, data.list[i].size, 
+                data.list[i].invoice, data.list[i].letra, data.list[i].primeras, data.list[i].p_day, data.list[i].operation, data.list[i].seg, data.list[i].conf
+              ]);
+            }
+            $('.sew-table').dataTable().fnClearTable();
+            if(tableData.length > 0){
+              $('.sew-table').dataTable().fnAddData(tableData);
+              $('.sew-table').dataTable().fnDraw();
+              $('.total').html(total);
+              $('.total_seg').html(total_seg);
+              $('.total_conf').html(total_conf);
+            }
+            refreshEvent();
+          }else{
+            alert('Cannot load list. Please contact support team.');
+          }
+        }
+      })
+    })    
+
+    var bfirst, bfirst2, oldpo, oldcolor, oldsize, row;
+    function refreshEvent(){
+      $('.sew-table tbody tr').off();
+      $('.sew-table tbody tr').on('click', function(){
+        row = $(".sew-table").DataTable().row($(this));
+        let date =  $($(this).find('td')[0]).html();
+        let line =  $($(this).find('td')[1]).html();
+        let file =  $($(this).find('td')[2]).html();
+        oldpo =  $($(this).find('td')[3]).html();
+        oldcolor =  $($(this).find('td')[4]).html();
+        oldsize =  $($(this).find('td')[5]).html();
+        oldletra = $($(this).find('td')[7]).html();
+        for(var i = 0; i < alllist.length; i++){
+          //- console.log(alllist[i]);
+          //- console.log(date);
+          //- console.log(oldcolor);
+          //- console.log(oldpo);
+          //- console.log(oldsize);
+          //- console.log(oldletra);
+          if((alllist[i].date.toString() == date.toString()) && (alllist[i].colorname.toString() == oldcolor.toString()) && (alllist[i].po.toString() == oldpo.toString())
+            && (alllist[i].size.toString() == oldsize.toString()) && (alllist[i].letra.toString() == oldletra.toString())){
+            $('.update-line').val(alllist[i].line).trigger('change');
+            $('.update-file').val(alllist[i].orderid).trigger('change');
+            $('.update-date').val(date);
+            $('.update-invoice').val(alllist[i].invoice);
+            $('.update-letra').val(alllist[i].letra);
+            $('.update-primeras').val(alllist[i].primeras);
+            $('.update-p_day').val(alllist[i].p_day);
+            $('.update-operation').val(alllist[i].operation);
+            $('.update-seg').val(alllist[i].seg);
+            $('.update-conf').val(alllist[i].conf);
+            $('.oldpo').val(alllist[i].id);
+            $('.olddate').val(alllist[i].date);
+            $('.oldline').val(alllist[i].line);
+            $('.oldletra').val(alllist[i].letra);
+            
+            loadSizeList(alllist[i].orderid);
+          }
+        }
+        $('.update-panel').fadeIn();
+        $('.add-panel').fadeOut();
+        bfirst = true;
+        bfirst2 = true;
+      });
+    }
+
+    $('.update-file').on('change', function(data){
+      $.ajax({
+        url: '/dashboard/sew/orderdetail',
+        type: 'POST',
+        data: {
+          orderid: $(this).val()
+        },
+        success: function(result){
+          if(result.isSuccess){
+            orderdetails = result.data;
+            console.log(orderdetails);
+            $(".update-po").select2("destroy");
+            $('.update-po').html("");
+            $('.update-po').append(
+                '<option value="-1">Not Selected</option>'
+            );
+            var tmp = [];
+            $.each(orderdetails, function(index, value) {
+              if(!tmp.includes(orderdetails[index].po)){
+                tmp.push(orderdetails[index].po);
+                if(orderdetails[index].po == oldpo){
+                  $('.update-po').append(
+                    '<option value="' + orderdetails[index].id + '">' + orderdetails[index].po + '</option>'
+                  );
+                }else{
+                  $('.update-po').append(
+                    '<option value="' + orderdetails[index].id + '">' + orderdetails[index].po + '</option>'
+                  );
+                }
+              }
+            });
+            $(".update-po").select2();
+            
+            $('.update-po').on('change', function(){
+              var po = $(this).val();
+              $(".update-color").select2("destroy");
+              $('.update-color').html("");
+              $('.update-color').append(
+                  '<option value="-1">Not Selected</option>'
+              );
+              var colorname = [];
+              for(var index = 0; index < orderdetails.length; index++){
+                if(po != orderdetails[index].id) continue;
+                if(!colorname.includes(orderdetails[index].colorname)){                  
+                  $('.update-color').append(
+                    '<option value="' + orderdetails[index].color + '">' + orderdetails[index].colorname + '</option>'
+                  );
+                  colorname.push(orderdetails[index].colorname);
+                }
+              }
+              $(".update-color").select2();
+              $(".update-colorcode").select2("destroy");
+              $('.update-colorcode').html("");
+              $('.update-colorcode').append(
+                  '<option value="-1">Not Selected</option>'
+              );
+              var colorcode = [];
+              for(var index = 0; index < orderdetails.length; index++) {
+                if(po != orderdetails[index].id) continue;
+
+                if(!colorcode.includes(orderdetails[index].color)){
+                  $('.update-colorcode').append(
+                    '<option value="' + orderdetails[index].color + '">' + orderdetails[index].color + '</option>'
+                  );
+                  colorcode.push(orderdetails[index].color);
+                }                
+              };
+              $(".update-colorcode").select2();
+            })
+
+            if(bfirst){
+              for(var i = 0; i < orderdetails.length; i++){
+                if(orderdetails[i].po == oldpo){
+                  console.log(i);
+                  $('.update-po').val(orderdetails[i].id).trigger('change');
+                  let tmp = orderdetails[i];
+                  setTimeout(function(){
+                    $('.update-color').val(tmp.color).trigger('change');
+                  }, 500);
+                  break;
+                }
+              }
+              bfirst = false;
+            }
+
+          }else{
+            alert('Cannot load Orderdetail. Please contact support team.')
+          }
+        }
+      })
+    })
+
+    $('.update-form').submit(function(e){
+      e.preventDefault();
+      let po;
+      for(var i = 0; i < orderdetails.length; i++){
+        if(orderdetails[i].po == $('.update-po').select2('data')[0].text && orderdetails[i].colorname == $('.update-color').select2('data')[0].text){
+          po = orderdetails[i].id;
+        }
+      }
+      if($('.update-file').val() == -1){
+        alert('Please choose file.');
+        return;
+      }else if($('.update-line').val() == -1){
+        alert('Please choose Line.');
+        return;
+      }else if($('.update-po').val() == -1){
+        alert('Please choose PO.');
+        return;
+      }else if($('.update-color').val() == -1){
+        alert('Please choose color.');
+        return;
+      }else if($('.update-size').val() == -1){
+        alert('Please choose size.');
+        return;
+      }else if($('.update-date').val() == ''){
+        alert('Please choose Date').
+        return;
+      }
+
+      $.ajax({
+        url: '/dashboard/sew/daily/update',
+        type: 'POST',
+        data: {
+          oldpo: $('.oldpo').val(),
+          olddate: $('.olddate').val(),
+          oldline: $('.oldline').val(),
+          oldsize: $('.oldsize').val(),
+          oldletra: $('.oldletra').val(),
+          line: $('.update-line').val(),
+          po: po,
+          size: $('.update-size').val(),
+          invoice: $('.update-invoice').val(),
+          date: $('.update-date').val(),
+          letra: $('.update-letra').val(),
+          primeras: $('.update-primeras').val(),
+          p_day: $('.update-p_day').val(),
+          operation: $('.update-operation').val(),
+          seg: $('.update-seg').val(),
+          conf: $('.update-conf').val()
+        },
+        success: function(result){
+          if(result.isSuccess){
+            console.log(result);
+            row.data([
+              $('.update-date').val(), $('.update-line').select2('data')[0].text, 
+              $('.update-file').select2('data')[0].text, $('.update-po').select2('data')[0].text,
+              $('.update-color').select2('data')[0].text, $('.update-size').select2('data')[0].text,
+              $('.update-invoice').val(), $('.update-letra').val(), $('.update-primeras').val(),
+              $('.update-p_day').val(), $('.update-operation').val(),
+              $('.update-seg').val(), $('.update-conf').val()
+            ]).draw();            
+            $('.update-panel').fadeOut();
+            refreshEvent();
+          }else{
+            alert('Cannot update. Please contact support team.');
+          }
+        }
+      })
+    })
+
+    $('.remove').on('click', function(){
+      $.ajax({
+        url: '/dashboard/sew/daily/remove',
+        type: 'POST',
+        data: {
+          oldpo: $('.oldpo').val(),
+          olddate: $('.olddate').val(),
+          oldline: $('.oldline').val(),
+          oldsize: $('.oldsize').val(),
+          oldletra: $('.oldletra').val()
+        },
+        success: function(result){
+          if(result.isSuccess){
+            row.remove();
+            $('.sew-table').dataTable().fnDraw();
+            $('.update-panel').fadeOut();
+          }else{
+            alert('Cannot remove. Please contact support team.')
+          }
+        }
+      })
+    })
+
+    var uploadExcel = function(){
+      var result = confirm("Want to Upload this file?");
+      if (result) {
+        var formData = new FormData();
+        formData.append('excel', document.getElementsByClassName('inputexcelfile')[0].files[0]);
+        //formData.append('id', order.id);
+        var request = new XMLHttpRequest();
+        request.open('POST', '/dashboard/sew/daily/upload');
+        request.onreadystatechange = function() {
+          if (request.readyState === 4) {
+            var response = JSON.parse(request.responseText);
+            if(response.isSuccess == true){
+              if(response.fail.length != 0){
+                alert(response.fail);
+              }
+              $('.search-form').submit();
+            }else{
+              alert('Error While uploading.');
+              $('.search-form').submit();
+            }
+          }
+        }
+        request.send(formData);
+      }
+    }
+
+    $('.sew-table').on( 'page.dt', function () {
+      setTimeout(function(){
+        refreshEvent();
+      }, 500)
+    });
+
+    $('.sew-table').on( 'search.dt', function () {
+      setTimeout(function(){
+        refreshEvent();
+      }, 500)
+    });

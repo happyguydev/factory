@@ -1,0 +1,381 @@
+extends layout
+block content
+  section.content.dashboard
+    .page-heading
+      h1 #{__('PRODUCTION')} #{__('STATUS')}
+    .page-body
+      // Infobox
+      .row.clearfix
+        .col-lg-3.col-md-3.col-sm-6.col-xs-12
+          .info-box.infobox-type-5.hover-expand-effect
+            .icon
+              i.material-icons supervisor_account
+            .content
+              .text #{__('WORKERS')}
+              .number.workers                
+        .col-lg-3.col-md-3.col-sm-6.col-xs-12
+          .info-box.infobox-type-5.hover-expand-effect
+            .icon
+              i.material-icons equalizer
+            .content
+              .text #{__('DAILY')} #{__('META')}
+              .number
+                span.meta 
+                span.font-12  #{__('AVG')}. 
+                  span.avg
+        .col-lg-3.col-md-3.col-sm-6.col-xs-12
+          .info-box.infobox-type-5.hover-expand-effect
+            .icon
+              i.material-icons shopping_cart
+            .content
+              .text #{__('ACTUAL')} #{__('PRODUCTION')}
+              .number
+                span.sum 
+                span.font-12.col-danger
+                  i.material-icons(style='vertical-align: middle;') arrow_drop_down
+                  span.balance 
+        .col-lg-3.col-md-3.col-sm-6.col-xs-12
+          .info-box.infobox-type-5.hover-expand-effect
+            .icon
+              i.material-icons assignment
+            .content
+              .text #1 #{__('PRODUCTION')}
+              .number
+                span.max
+                span.font-12  
+                  span.line
+      // Main Graph
+      //- .main-graph
+      //-   .row.clearfix
+      //-     .col-xs-12.col-sm-12.col-md-12.col-lg-12.padding-20.overflow-hidden
+      //-       .graph-area
+      //-         #line_chart
+      // #END# Main Graph
+      // Task List
+      .panel.panel-default
+        .panel-heading #{__('TASK')} #{__('LIST')}
+        .panel-body
+          .table-responsive
+            table.table.task-table
+              thead
+                tr
+                  th #
+                  th #{__('ORDER')}#
+                  th #{__('BUYER')}
+                  th #{__('STYLE')}
+                  th #{__('PO')}
+                  th #{__('SHIP')} #{__('DATE')}
+                  th #{__('COLOR')}
+                  th #{__('QUANTITY')}
+                  th #{__('PRIORITY')}
+                  th #{__('PROCESS')}
+                  th #{__('BALANCE')}                  
+                  th #{__('ENDDATE')}
+                  th #{__('COMPLETE')}
+              tbody
+                - for(var i = 0; i < orders.length; i++){
+                  - if(orders[i].priorityname == 'Completed' || orders[i].priorityname == 'Completed'){
+                    - continue;
+                  - }
+                  tr
+                    td #{i}
+                    td
+                      a.m_t_order(href="javascript:void(0)" data-ordername="#{orders[i].ordername}" data-buyer="#{orders[i].buyername}") #{orders[i].ordername}
+                    td #{orders[i].buyername}
+                    td #{orders[i].style}
+                    td #{orders[i].po}
+                    td #{orders[i].shipdate}
+                    td #{orders[i].colorname}
+                    td #{orders[i].quantity}
+                    td
+                      - if((new Date(orders[i].shipdate).getTime() - new Date().getTime()) < 60*60*24*1000*10){
+                        i.fa.fa-circle.m-r-5.col-danger 
+                        | #{__('HIGH')}
+                      - }else{
+                        i.fa.fa-circle.m-r-5.col-success 
+                        | #{__('NORMAL')}
+                      - }
+                    - if(orders[i]['wash'] != undefined){
+                        td #{__('WASH')}
+                        - if(Number(orders[i].washquantity)-Number(orders[i].quantity) < 0){
+                            td(style='color: red;') #{Number(orders[i].washquantity)-Number(orders[i].quantity)}
+                        - }else{
+                            td #{Number(orders[i].washquantity)-Number(orders[i].quantity)}
+                        - }                    
+                        - if(orders[i]['washdate'] != undefined){
+                            td #{orders[i].washdate}
+                        - }else{
+                            td
+                        - }
+                        td  #{parseFloat(Number(orders[i].washquantity)/Number(orders[i].quantity) * 100).toFixed(2)}%
+                    - }else if(orders[i]['print'] != undefined){
+                        td Print
+                        - if(Number(orders[i].printquantity)-Number(orders[i].quantity) < 0){
+                            td(style='color: red;') #{Number(orders[i].printquantity)-Number(orders[i].quantity)}
+                        - }else{
+                            td #{Number(orders[i].printquantity)-Number(orders[i].quantity)}
+                        - }
+                        - if(orders[i]['printdate'] != undefined){
+                            td #{orders[i].printdate}
+                        - }else{
+                            td
+                        - }
+                        td  #{parseFloat(Number(orders[i].printquantity)/Number(orders[i].quantity) * 100).toFixed(2)}%
+                    - }else if(orders[i]['cut'] != undefined){
+                        td Cut
+                        - if(Number(orders[i].cutquantity)-Number(orders[i].quantity) < 0){
+                            td(style='color: red;') #{Number(orders[i].cutquantity)-Number(orders[i].quantity)}
+                        - }else{
+                            td #{Number(orders[i].cutquantity)-Number(orders[i].quantity)}
+                        - }                    
+                        - if(orders[i]['cutdate'] != undefined){
+                            td #{orders[i].cutdate}
+                        - }else{
+                            td
+                        - }
+                        td  #{parseFloat(Number(orders[i].cutquantity)/Number(orders[i].quantity) * 100).toFixed(2)}%
+                    - }else{
+                        td
+                        td(style='color: red;') #{-Number(orders[i].quantity)}
+                        td
+                        td
+                    - }
+                - }
+        // #END# Task List
+block script
+  <!-- Peity Js -->
+  script(src='/assets/plugins/peity/jquery.peity.min.js')
+  script(src='/assets/plugins/iCheck/icheck.min.js')
+  script(src='/assets/plugins/jquery-sparkline/dist/jquery.sparkline.min.js')
+  // Flot Chart Js
+  script(src='/assets/plugins/flot/jquery.flot.js')
+  script(src='/assets/plugins/flot-spline/js/jquery.flot.spline.js')
+  script(src='/assets/plugins/flot/jquery.flot.pie.js')
+  script(src='/assets/plugins/flot/jquery.flot.categories.js')
+  script(src='/assets/plugins/flot/jquery.flot.time.js')
+
+  script(src='/assets/js/pages/dashboard/dashboard.js')
+  script.
+    var lines = (!{JSON.stringify(lines)});
+    $('.task-table').DataTable({
+      "pageLength": 100,
+      responsive: true,
+      dom: '<"html5buttons"B>lTfgtip',
+      buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+    });
+
+    var getChartData = function(){
+      $.ajax({
+        url: '/dashboard/chartdata',
+        type: 'POST',
+        data: {
+          year: new Date().getFullYear(),
+          month: new Date().getMonth() + 1
+        },
+        success: function(result){
+          if(result.isSuccess){            
+            var data = JSON.parse(result.data);
+            console.log(data);
+            //console.log(data);
+            flotChartDatas = [];
+            for(var i = 0; i < Object.keys(data).length; i++){
+              var d = [];
+              for(var j = 1; j <= 31; j++){
+                for(var k = 0; k < Object.keys(data).length; k++) {
+                  if(data[Object.keys(data)[k]][j] != undefined){
+                    break;
+                  }
+                }
+                if(k == Object.keys(data).length) continue;
+                
+                if(data[Object.keys(data)[i]][j] != undefined){
+                  d.push([j, data[Object.keys(data)[i]][j]]);
+                }else{
+                  d.push([j, 0]);
+                }
+              }              
+              for(var j = 0; j < lines.length; j++){
+                if(lines[j].id == Object.keys(data)[i]){
+                  flotChartDatas.push({label: lines[j].name, data: d});
+                }
+              }              
+            }
+            initFlotChart();
+          }else{
+            console.log('Cannot load chart data.');
+          }
+        }
+      })
+    }
+    //- setInterval(getChartData, 30000);    
+    //- getChartData();
+
+    var flotChartDatas;
+    function componentToHex(c) {
+      var hex = c.toString(16);
+      return hex.length == 1 ? "0" + hex : hex;
+    }
+
+    function rgbToHex(r, g, b) {
+        return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+    }
+
+    var flotChartOptions = {
+        series: {
+            lines: {
+                show: false,
+                fill: true,
+                lineWidth: 0.3
+            },
+            points: {
+                show: false,
+                radius: 2,
+                width: 2
+            },
+            splines: {
+                show: true,
+                tension: 0.4,
+                lineWidth: 1,
+                fill: 0.0
+            },
+            shadowSize: 0
+        },
+        grid: {
+            hoverable: true,
+            clickable: true,
+            tickColor: '#f0f0f0',
+            borderWidth: 1,
+            color: '#f0f0f0'
+        },
+        colors: ['#ff3333', '#3333ff', '#008888', '#00ff00', '#ffff00', '#66004d', 
+        '#261a1a', '#1a6600', '#ff6666', '#6f33cc', '#6666ff', '#cc3300', '#ffcc88', '#334066', '#663333', '#ffff33'],
+        yaxis: {
+            ticks: 8
+        },
+        xaxis: {
+          mode: "categories",
+          tickLength: 0
+        }
+    }
+    //- function initFlotChart() {
+    //-   $.plot('#line_chart', flotChartDatas, flotChartOptions);
+    //- }    
+    //- $('.js-toggle-left-sidebar').on('click', function () {
+    //-     setTimeout(initFlotChart, 500);
+    //- });    
+    //- window.onresize = function (e) {
+    //-   initFlotChart();
+    //- };
+
+    //Get Top Meta Data    
+    var getMetaData = function(){
+      $.ajax({
+        url: '/dashboard/metadata',
+        type: 'POST',
+        data: {
+          year: new Date().getFullYear(),
+          month: new Date().getMonth() + 1,
+          day: new Date().getDate()
+        },
+        success: function(res){          
+          if(res.isSuccess){
+            var data = JSON.parse(res.data);
+            //console.log(data);
+            var sum = 0;
+            var meta = 0;
+            var linename, max = 0;
+            for(var i = 0; i < Object.keys(data).length; i++){
+              if(data[Object.keys(data)[i]]['sum'] != undefined){
+                sum += Number(data[Object.keys(data)[i]]['sum']);
+                meta += Number(data[Object.keys(data)[i]]['meta']);
+                if(max < Number(data[Object.keys(data)[i]]['sum'])){
+                  max = Number(data[Object.keys(data)[i]]['sum']);
+                  for(var j = 0; j < lines.length; j++){
+                    if(lines[j].id == Object.keys(data)[i]){
+                      linename = lines[j].name;
+                    }
+                  }
+                  
+                }
+              }
+            }
+            $('.meta').html(meta);
+            $('.sum').html(sum);
+            $('.balance').html(sum - meta);
+            $('.max').html(max);
+            $('.line').html(linename);
+          }
+        }
+      })
+    }
+    getMetaData();
+    setTimeout(getMetaData, 30000);
+
+
+    var getAverageData = function(){
+      $.ajax({
+        url: '/dashboard/avgdata',
+        type: 'POST',
+        data: {
+          year: new Date().getFullYear()
+        },
+        success: function(res){          
+          if(res.isSuccess){
+            $('.avg').html(Number(res.avg).toFixed(0));
+          }
+        }
+      })
+    }
+    getAverageData();
+    setTimeout(getAverageData, 30000);
+
+    var getProductionData = function() {
+      $.ajax({
+        url: '/dashboard2/production',
+        type: 'POST',
+        data: {
+          date: new Date().getFullYear()+'-'+("0"+(new Date().getMonth()+1)).slice(-2)+'-'+("0" + new Date().getDate()).slice(-2)
+        },
+        success: function(result) {
+          if(result.isSuccess) {
+            var sewer = 0, assistant = 0, min = 9999999, max = 0;
+            for(var i = 0; i < result.list.length; i++) {
+              if(result.list[i].sewer == undefined || result.list[i].sewer == 'NULL' || result.list[i].sewer == '')
+                result.list[i].sewer = 0;
+              if(result.list[i].assistant == undefined || result.list[i].assistant == 'NULL' || result.list[i].assistant == '')
+                result.list[i].assistant = 0;
+              sewer += Number(result.list[i].sewer);
+              assistant += Number(result.list[i].assistant);                  
+            }
+            var workers = sewer + assistant;
+            $('.workers').html(workers);
+          } else {
+            alert('Cannot load Workers');
+          }         
+        }
+      })
+    }
+    getProductionData();
+    //Left Menu
+    $('.m-dashboard1').addClass('active');
+    $('.m_t_order').on('click', function() {
+      let ordername = $(this).data('ordername');
+      let buyer = $(this).data('buyer');
+      var method = 'POST';
+      var form = document.createElement("form");
+      form.setAttribute("method", method);
+      form.setAttribute("action", '/dashboard/order/order_detail');
+      var hiddenField = document.createElement("input");
+      hiddenField.setAttribute("type", "hidden");
+      hiddenField.setAttribute("name", "ordername");
+      hiddenField.setAttribute("value", ordername);
+      form.appendChild(hiddenField)
+      hiddenField = document.createElement("input");
+      hiddenField.setAttribute("type", "hidden");
+      hiddenField.setAttribute("name", "buyer");
+      hiddenField.setAttribute("value", buyer);
+      form.appendChild(hiddenField)
+
+      document.body.appendChild(form);
+      form.submit();
+    })

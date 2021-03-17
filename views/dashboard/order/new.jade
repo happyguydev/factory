@@ -1,0 +1,38 @@
+extends ../layout
+block content
+  section.content.dashboard
+    .panel.panel-default
+      .panel-heading
+        a.btn.btn-sm.btn-success(href='/dashboard/order/new')
+          i.fa.fa-plus.m-r-5
+          | #{__('Add')} #{__('New')} #{__('Order')}
+      .panel-body
+        table.table.table-striped.table-hover.js-exportable.dataTable
+          thead
+            tr
+              th #{__('No')}.
+              th #{__('Date')}
+              th #{__('Handler')}
+              th #{__('Order')}#
+              th #{__('Buyer')}
+              th #{__('Style')}
+              th #{__('Product')}
+              th #{__('Size')} #{__('Group')}
+              th #{__('Product')} #{__('Group')}
+              th #{__('Finish')} #{__('Group')}
+              th #{__('Quantity')}
+              th #{__('Amount')}
+          tbody
+            tr
+              td 1
+              td 2018-03-07
+              td Mary Kim
+              td 1811259-01
+              td Li&Fung (Express)
+              td 8605054
+              td 111 B/O London Tank
+              td S1
+              td M1
+              td F1
+              td 27,601 pcs
+              td $320,800

@@ -1,0 +1,1323 @@
+extends ../layout
+block link  
+  link(href='/assets/plugins/dropzone/dist/dropzone.css', rel='stylesheet')
+block content
+  section.content.dashboard
+    .page-heading
+      h1 #{__("Sewing Order Detail")}
+    .page-body
+      - for(var ppp = 0; ppp < role.length; ppp++){
+        - if(role[ppp].page == 1 && role[ppp].w == 1){
+            .row
+              .col-md-12
+                .panel.panel-default
+                  .panel-heading
+                    | #{__("PRODUCT IMAGE UPLOAD")}
+                  .panel-body(style='display: none;')
+                    form#frmFileUpload.dropzone(action='/dashboard/order/order_image_add', method='post', enctype='multipart/form-data')
+                      input(type="hidden", value='#{order.id}', name='id')
+                      .dz-message
+                        .drag-icon-cph
+                          i.fa.fa-hand-pointer-o
+                        h3 #{__("Drop files here or click to upload.")}
+                      .fallback
+                        input(name='file', type='file', multiple='')
+        - }
+      - }      
+      .row
+        .col-sm-4
+          - for(var ppp = 0; ppp < role.length; ppp++){
+            - if(role[ppp].page == 1 && role[ppp].w == 1){
+                .panel.panel-default.update-order-info-panel(style='display:none;')
+                  .panel-heading #{__('Update')} #{__('Order')}
+                  .panel-body
+                    form.update-order-info-form
+                      input(type="hidden", value='#{order.id}').order-id                
+                      .form-group.clearfix.col-md-6
+                        label.display-block #{__('Product')}
+                        input.form-control.order-product(type='text')
+                      .form-group.clearfix.col-md-6
+                        label.display-block #{__('Season')}
+                        input.form-control.order-season(type='text')
+                      .form-group.clearfix.col-md-6
+                        label.display-block #{__('Qty')}
+                        input.form-control.order-qty(type='text')
+                      .form-group.clearfix.col-md-6
+                        label.display-block #{__('Amount')}
+                        input.form-control.order-amount(type='text')
+                      .form-group.clearfix.col-md-6
+                        label.display-block #{__('Unit')} #{__('Price')}
+                        input.form-control.order-unit(type='text')
+                      .form-group.clearfix.col-md-6
+                        label.display-block ##{__('Style')}
+                        input.form-control.order-style(type='text')
+                      .form-group.clearfix.col-md-6
+                        label.display-block #{__('Complete')}
+                        select.select-bar.order-complete(style='width: 100%;')
+                          option(value='1') Complete
+                          option(value='0') Incomplete
+                      .form-group.col-md-12
+                        button.btn.btn-sm.btn-success.pull-right(type='submit') #{__('Update')}
+            - }
+          - }
+          .panel.panel-default
+            .panel-heading
+              | #{__("Order Information")}
+            .panel-body(style='min-height: 400px;')
+              .align-justify
+                table.table.table-bordered.order-info-table
+                  tbody
+                    tr
+                      td(style='width:30%;') #{__("# File")}
+                      td #{order.name}
+                    tr
+                      td #{__("Date")}
+                      td #{new Date(order.date).getFullYear()+'-'+(new Date(order.date).getMonth()+1)+'-'+new Date(order.date).getDate()}
+                    tr
+                      td #{__("Handler")}
+                      td #{order.handlername}
+                    tr
+                      td #{__("Buyer")}
+                      td #{order.buyername}
+                    tr
+                      td #{__("# Style")}
+                      td.td-style #{order.style}
+                    tr
+                      td #{__("Product")}
+                      td.td-product #{order.product}
+                    tr
+                      td #{__("Season")}
+                      td.td-season #{order.season}
+                    tr
+                      td #{__("Q'ty")}
+                      td.td-quantity #{order.quantity}
+                    tr
+                      td #{__("Amount")}
+                      td.td-amount #{order.amount}
+                    tr
+                      td #{__("Unit Price")}
+                      td.td-unit #{order.price}
+                    tr
+                      td #{__("Complete")}
+                      td.td-complete #{order.complete == 1? 'Complete': 'Incomplete'}
+              form(action='/dashboard/order/order_remove' method='post' onsubmit='return validateForm()').remove-order-form
+                input(type="hidden", name = 'id', value = '#{order.id}')
+                - for(var i = 0; i < role.length; i++){
+                  - if(role[i].page == 1 && role[i].d == 1){
+                      button(type='submit').btn.btn-sm.btn-success.pull-right.remove-order #{__("Delete Order")}
+                  - }
+                  - if(role[i].page == 1 && role[i].w == 1){
+                      .btn.btn-sm.btn-success.pull-right.update-order-info(style='margin-right: 20px;') #{__("Update Order")}
+                  - }
+                - }
+                
+        .col-sm-4
+          .panel.panel-default.update-order-panel(style='display:none;')
+            .panel-heading #{__('Update')} #{__('Material')}/#{__('Margin')}
+            .panel-body
+              form.update-order-form
+                input(type="hidden", value='#{order.id}').order-id                
+                .form-group.clearfix.col-md-6.trsgroup
+                  label.display-block #{__("Size Group")}
+                  select.select-bar.select-s-group(style='width: 100%;')
+                    option(value='-1') Not Selected
+                .form-group.clearfix.col-md-6
+                  label.display-block #{__('Product')} #{__('Material')} #{__('Group')}
+                  select.select-bar.select-p-group(style='width: 100%;')
+                    option(value='-1') Not Selected                    
+                .form-group.clearfix.col-md-6
+                  label.display-block #{__('Finish')} #{__('Material')} #{__('Group')}
+                  select.select-bar.select-f-group(style='width: 100%;')
+                    option(value='-1') Not Selected                    
+                .form-group.clearfix.col-md-6
+                  label.display-block #{__('Fabric')} #{__('Margin')} #{__('Rate')}
+                  input.form-control.fabric-margin(type='text',  required='')
+                .form-group.clearfix.col-md-6
+                  label.display-block #{__('Material')} #{__('Margin')} #{__('Rate')}
+                  input.form-control.material-margin(type='text', required='')
+                .form-group.clearfix.col-md-6
+                  label.display-block #{__('Sew')} #{__('Margin')} #{__('Rate')}
+                  input.form-control.sew-margin(type='text')
+                .form-group.col-md-12
+                  button.btn.btn-sm.btn-success.pull-right(type='submit') #{__('Update')}
+          
+          .panel.panel-default
+            .panel-heading
+              | #{__("Product Images / Sizes / Material")}
+            .panel-body(style='min-height: 435px;')
+              div(style='overflow-x: scroll;').image-slide
+                - if(order.files != undefined && order.files != ''){
+                    - var orderimages = order.files.split(',');
+                        div(style='width: #{210 * orderimages.length}px;')
+                          - for(var i = 0; i < orderimages.length; i++){
+                              div(style='display:inline-block;')
+                                img(src='/uploads/order/image/#{orderimages[i]}', style='height:195px; width:200px; margin-left: 5px;')
+                                i.material-icons.delete-icon(data-name="#{orderimages[i]}") delete
+                          - }
+                - }
+                
+              table.table.table-bordered
+                tbody                  
+                  tr.trsgroup
+                    td #{__("Size Group")}
+                    td(colspan='2').tdsgroup #{sizegroup.name}                    
+                  tr
+                    td #{__("Product Group")}
+                    td(colspan='2').tdpgroup #{productgroup.name}
+                  tr
+                    td #{__("Finish Group")}
+                    td(colspan='2').tdfgroup #{finishgroup.name}
+                  tr
+                    td #{__("Fabric Margin Rate")}
+                    td(colspan='2').tdfmargin #{order.fabricmargin} %
+                  tr
+                    td #{__("Material Margin Rate")}
+                    td(colspan='2').tdmmargin #{order.materialmargin} %
+                  tr
+                    td #{__("Sew Margin Rate")}
+                    td(colspan='2').tdsmargin #{order.sewmargin} %
+              - for(var i = 0; i < role.length; i++){
+                - if(role[i].page == 1 && role[i].w == 1){
+                    button.btn.btn-sm.btn-success.pull-right.update-order #{__('Update')}
+                - }
+              - }              
+        .col-sm-4
+          .panel.panel-default.add-fabric-panel(style='display: none;')
+            .panel-heading #{__("Add Fabric")}
+            .panel-body
+              form.add-fabric-form(action='/dashboard/order/order_fabric_add' method='post')
+                input(type="hidden", value='#{order.id}').order-id
+                .form-group.clearfix.col-md-12(style='display:none;')
+                  label.display-block #{__("Yarn")}
+                  select.select-bar.new-yarn.select-fabric(style='width: 100%;', name='yarn')
+                    option(value='-1') Not Selected
+                    - for (var i = 0; i < yarncode.length; ++i) {
+                        option(value='#{yarncode[i].id}') #{yarncode[i].name}
+                    - }
+                .form-group.clearfix.col-md-12
+                  label.display-block #{__("Type")}
+                  select.select-bar.new-type.select-fabric(style='width: 100%;', name='type')
+                    option(value='-1') Not Selected
+                    - for (var i = 0; i < fabrictypecode.length; ++i) {
+                        option(value='#{fabrictypecode[i].id}') #{fabrictypecode[i].name}
+                    - }
+                .form-group.clearfix.col-md-12
+                  label.display-block #{__("Fabric")}
+                  select.select-bar.new-fabric.select-fabric(style='width: 100%;', name='fabric')
+                    option(value='-1') Not Selected
+                    - for (var i = 0; i < fabriccode.length; ++i) {
+                        option(value='#{fabriccode[i].id}') #{fabriccode[i].name}
+                    - }
+                .form-group.clearfix.col-md-6
+                  label.display-block #{__("Width")}
+                  input.form-control.new-width(type='text', placeholder='Width', name='width',  required='')
+                .form-group.clearfix.col-md-6
+                  label.display-block #{__("Weight")}
+                  input.form-control.new-weight(type='text', placeholder='Weight', name='weight',  required='')
+                .form-group.col-md-12
+                  button.btn.btn-sm.btn-success.pull-right(type='submit') #{__("Add Fabric")}
+          - for(var ppp = 0; ppp < role.length; ppp++){
+            - if(role[ppp].page == 1 && role[ppp].w == 1){
+                .panel.panel-default.update-fabric-panel(style='display: none;')
+                  .panel-heading #{__("Update Fabric")}
+                  .panel-body
+                    form.update-fabric-form(action='/dashboard/order/order_fabric_update' method='post')
+                      input(type="hidden", value='#{order.id}').order-id
+                      .form-group.clearfix.col-md-12(style='display:none;')
+                        label.display-block #{__("Yarn")}
+                        select.select-bar.new-yarn.select-fabric(style='width: 100%;', name='yarn')
+                          option(value='-1') Not Selected
+                          - for (var i = 0; i < yarncode.length; ++i) {
+                              option(value='#{yarncode[i].id}') #{yarncode[i].name}
+                          - }
+                      .form-group.clearfix.col-md-12
+                        label.display-block #{__("Type")}
+                        select.select-bar.new-type.select-fabric(style='width: 100%;', name='type')
+                          option(value='-1') Not Selected
+                          - for (var i = 0; i < fabrictypecode.length; ++i) {
+                              option(value='#{fabrictypecode[i].id}') #{fabrictypecode[i].name}
+                          - }
+                      .form-group.clearfix.col-md-12
+                        label.display-block #{__("Fabric")}
+                        select.select-bar.new-fabric.select-fabric(style='width: 100%;', name='fabric')
+                          option(value='-1') Not Selected
+                          - for (var i = 0; i < fabriccode.length; ++i) {
+                              option(value='#{fabriccode[i].id}') #{fabriccode[i].name}
+                          - }
+                      .form-group.clearfix.col-md-6
+                        label.display-block #{__("Width")}
+                        input.form-control.new-width(type='text', placeholder='Width', name='width',  required='')
+                      .form-group.clearfix.col-md-6
+                        label.display-block #{__("Weight")}
+                        input.form-control.new-weight(type='text', placeholder='Weight', name='weight',  required='')
+                      .form-group.col-md-12
+                        button.btn.btn-sm.btn-success.pull-right(type='submit') #{__("Update Fabric")}
+                        - for(var i = 0; i < role.length; i++){
+                          - if(role[i].page == 1 && role[i].d == 1){
+                              .btn.btn-sm.btn-success.pull-right.remove(style='margin-right: 20px;') #{__("Remove Fabric")}
+                          - }
+                        - }
+            - }
+          - }
+
+          .panel.panel-default
+            .panel-heading
+              | #{__("Fabrics")}
+            .panel-body(style='min-height: 435px;')
+              table.table.table-bordered
+                tbody.fabrics-table-body
+              - for(var i = 0; i < role.length; i++){
+                - if(role[i].page == 1 && role[i].w == 1){
+                    button.btn.btn-sm.btn-success.add-fabric.pull-right
+                      i.fa.fa-plus.m-r-5
+                      | #{__("Add New Fabric")}
+                - }
+              - }    
+          
+      .row
+        .col-sm-12
+          
+          .panel.panel-default.add-detail-panel(style='display:none;')
+            .panel-heading
+              | #{__("Add Detail")}
+            .panel-body
+              form.add-detail-form(action='/dashboard/order/order_detail_add' method='post')
+                input(type="hidden", value='#{order.id}').order-id
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("# Style")}
+                  input.form-control.new-style(type='text', placeholder='Style', required='')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("PO#")}
+                  input.form-control.new-po(type='text', placeholder='PO', name='po',  required='')                
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("SHIP DATE")}
+                  input.form-control.new-shipdate(type='text', placeholder='Please choose a date...', data-format='YYYY-MM-DD')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("COLOR")}
+                  select.select-bar.new-color.select-fabric(style='width: 100%;')
+                    option(value='-1') Not Selected
+                    - for (var i = 0; i < colorcode.length; ++i) {
+                        option(value='#{colorcode[i].code}') #{colorcode[i].name}
+                    - }
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("COLOR CODE")}
+                  select.select-bar.new-colorcode.select-fabric(style='width: 100%;')
+                    option(value='-1') Not Selected
+                    - for (var i = 0; i < colorcode.length; ++i) {
+                        option(value='#{colorcode[i].code}') #{colorcode[i].code}
+                    - }
+                - for(var i = 0; i < 10; i++){
+                  - if(sizegroup['size'+[i+1]] != -1){
+                    -for(var j = 0; j < sizecode.length; j++){
+                      - if(sizecode[j].id == sizegroup['size'+[i+1]]){
+                          .form-group.clearfix.col-md-2
+                            label.display-block #{sizecode[j].name}
+                            input.form-control(type='text', placeholder='', class='new-size#{i}')
+                      - }                      
+                    - }                      
+                  - }
+                  - else {
+                      .form-group.clearfix.col-md-2(style='display:none;')
+                        label.display-block #{sizegroup['size'+[i+1]]}
+                        input.form-control(type='text', placeholder='', class='new-size#{i}')
+                  - }
+                - }                
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("Body")}
+                  input.form-control.new-body(type='text', placeholder='Body', name='body')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("Trim")}
+                  input.form-control.new-trim(type='text', placeholder='Trim', name='trim')                
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("Priority")}
+                  select.form-control.select-bar.new-priority.select-fabric(style='width: 100%;')
+                    option(value='-1') Not Selected
+                    - for(var i = 0; i < prioritycode.length; i++){
+                        option(value='#{prioritycode[i].code}') #{prioritycode[i].name}
+                    - }
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("Work")}
+                  select.form-control.select-bar.new-work.select-work(style='width: 100%;')
+                    - for(var i = 0; i < work.length; i++){
+                        option(value='#{work[i].value}') #{work[i].name}
+                    - }
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("Otra1")}
+                  input.form-control.new-otra1(type='text', placeholder='Otra1', name='otra1')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("Otra2")}
+                  input.form-control.new-otra2(type='text', placeholder='Otra2', name='otra2')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("Unit")}
+                  input.form-control.new-unit(type='text', placeholder='Unit')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("Fabric")}1
+                  input.form-control.new-f1(type='text')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("Fabric")}2
+                  input.form-control.new-f2(type='text')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("Fabric")}3
+                  input.form-control.new-f3(type='text')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("Fabric")}4
+                  input.form-control.new-f4(type='text')
+                .form-group.clearfix.col-md-2
+                  label.display-block #{__("Fabric")}5
+                  input.form-control.new-f5(type='text')
+                .form-group.col-md-12
+                  button.btn.btn-sm.btn-success.pull-right(type='submit') #{__("Add Detail")}
+          - for(var ppp = 0; ppp < role.length; ppp++){
+            - if(role[ppp].page == 1 && role[ppp].w == 1){
+                .panel.panel-default.update-detail-panel(style='display:none;')
+                  .panel-heading
+                    | #{__("Update Detail")}
+                  .panel-body
+                    form.update-detail-form(action='/dashboard/order/order_detail_update' method='post')
+                      input(type="hidden", value='#{order.id}').detail-id
+                      .form-group.clearfix.col-md-2
+                        label.display-block #{__("# Style")}
+                        input.form-control.new-style(type='text', placeholder='Style', required='')
+                      .form-group.clearfix.col-md-2
+                        label.display-block #{__("PO#")}
+                        input.form-control.new-po(type='text', placeholder='PO', name='po',  required='')
+                      .form-group.clearfix.col-md-2
+                        label.display-block #{__("SHIP DATE")}
+                        input.form-control.new-shipdate(type='text', placeholder='SHIP DATE', name='',  required='')                  
+                      .form-group.clearfix.col-md-2
+                        label.display-block #{__("COLOR")}
+                        select.select-bar.new-color.select-fabric(style='width: 100%;', name='yarn')
+                          option(value='-1') Not Selected
+                          - for (var i = 0; i < colorcode.length; ++i) {
+                              option(value='#{colorcode[i].code}') #{colorcode[i].name}
+                          - }
+                      - for(var i = 0; i < 10; i++){
+                        - if(sizegroup['size'+[i+1]] != -1){
+                          -for(var j = 0; j < sizecode.length; j++){
+                            - if(sizecode[j].id == sizegroup['size'+[i+1]]){
+                                .form-group.clearfix.col-md-2
+                                  label.display-block #{sizecode[j].name}
+                                  input.form-control(type='text', placeholder='', class='new-size#{i}')
+                            - }                      
+                          - }                      
+                        - }
+                        - else {
+                            .form-group.clearfix.col-md-2(style='display:none;')
+                              label.display-block #{sizegroup['size'+[i+1]]}
+                              input.form-control(type='text', placeholder='', class='new-size#{i}')
+                        - }
+                      - }                
+                      .form-group.clearfix.col-md-2
+                        label.display-block #{__("Body")}
+                        input.form-control.new-body(type='text', placeholder='Body', name='body')
+                      .form-group.clearfix.col-md-2
+                        label.display-block #{__("Trim")}
+                        input.form-control.new-trim(type='text', placeholder='Trim', name='trim')                      
+                      .form-group.clearfix.col-md-2
+                        label.display-block #{__("Priority")}
+                        select.select-bar.new-priority.select-fabric(style='width: 100%;', name='yarn')
+                          option(value='-1') Not Selected
+                          - for(var i = 0; i < prioritycode.length; i++){
+                              option(value='#{prioritycode[i].code}') #{prioritycode[i].name}
+                          - }
+                      .form-group.clearfix.col-md-2
+                        label.display-block #{__("Work")}
+                        select.select-bar.new-work.select-work(style='width: 100%;')
+                          - for(var i = 0; i < work.length; i++){
+                              option(value='#{work[i].value}') #{work[i].name}
+                          - }
+                      .form-group.clearfix.col-md-2
+                        label.display-block #{__("Otra1")}
+                        input.form-control.new-otra1(type='text', placeholder='Otra1', name='otra1')
+                      .form-group.clearfix.col-md-2
+                        label.display-block #{__("Otra2")}
+                        input.form-control.new-otra2(type='text', placeholder='Otra2', name='otra2')
+                      .form-group.clearfix.col-md-2
+                        label.display-block #{__("Unit")}
+                        input.form-control.new-unit(type='text', placeholder='Unit')
+                      .form-group.clearfix.col-md-2
+                        label.display-block #{__("Fabric")}1
+                        input.form-control.new-f1(type='text')
+                      .form-group.clearfix.col-md-2
+                        label.display-block #{__("Fabric")}2
+                        input.form-control.new-f2(type='text')
+                      .form-group.clearfix.col-md-2
+                        label.display-block #{__("Fabric")}3
+                        input.form-control.new-f3(type='text')
+                      .form-group.clearfix.col-md-2
+                        label.display-block #{__("Fabric")}4
+                        input.form-control.new-f4(type='text')
+                      .form-group.clearfix.col-md-2
+                        label.display-block #{__("Fabric")}5
+                        input.form-control.new-f5(type='text')
+                      .form-group.col-md-12
+                        button.btn.btn-sm.btn-success.pull-right(type='submit') #{__("Update Detail")}
+                        - for(var i = 0; i < role.length; i++){
+                          - if(role[i].page == 1 && role[i].d == 1){
+                              .btn.btn-sm.btn-success.pull-right.remove(style='margin-right: 20px;') #{__("Remove Detail")}
+                          - }
+                        - }
+                
+            - }
+          - }
+          
+          .panel.panel-default.order-detail-list
+            .panel-heading
+              | #{__("Quantity by Style#, PO#, Color")}
+            .panel-body
+              .align-justify
+                - for(var i = 0; i < role.length; i++){
+                  - if(role[i].page == 1 && role[i].w == 1){
+                      .p-b-10
+                        button.btn.btn-sm.btn-success.add-detail
+                          i.fa.fa-plus.m-r-5
+                          | #{__("Add New Detail")}
+                        .btn.btn-sm.btn-success.pull-right.remove-po(style='margin-left: 20px;') #{__('Remove')} #{__('Order')}
+                        button.btn.btn-sm.btn-success.upload-excel.pull-right(onclick="$('.inputexcelfile').click();")
+                          i.fa.fa-plus.m-r-5
+                          | #{__('Upload')} #{__('Excel')}                        
+                        form.upload-excel-form
+                          input.hide.inputexcelfile(type="file", accept=".xlsx", onchange="uploadExcel()", name="excel")
+                  - }
+                - }
+                
+                table#mainTable.table.table-bordered.table-striped.detailview
+                  thead.bg-blue-grey
+                    tr
+                      th(rowspan='2') #{__("STYLE#")}
+                      th(rowspan='2', width='7%') #{__("PO#")}
+                      th(rowspan='2', width='6%') #{__("SHIP DATE")}
+                      th(rowspan='2') #{__("COLOR")}
+                      th(rowspan='2', width='6%')
+                        | #{__("COLOR")}
+                        br
+                        | #{__("CODE")}#
+                      th.align-center(colspan='10') #{__("SIZE")}
+                      th(rowspan='2', width='6%') #{__("Size Total")}
+                      th.align-center(colspan='4', width='6%') #{__("CONSUMO")}
+                      th(rowspan='2', width='6%') #{__("Priority")}
+                      th(rowspan='2', width='5%') #{__("Work")}
+                      th(rowspan='2', width='5%') #{__("Unit")}
+                      th.align-center(colspan='5', width='6%') #{__("Fabrics")}
+                      th(rowspan='2', width='5%') Check
+                    tr
+                      - for(var i = 0; i < 10; i++){
+                        - if(sizegroup['size'+[i+1]] != -1){
+                          -for(var j = 0; j < sizecode.length; j++){
+                            - if(sizecode[j].id == sizegroup['size'+[i+1]]){
+                                th(width='5%') #{sizecode[j].name}
+                            - }                      
+                          - }                      
+                        - }
+                        - else {
+                            th(width='5%') 
+                        - }
+                      - }
+                      th(width='5%') #{__("Body")}
+                      th(width='5%') #{__("Trim")}
+                      th(width='5%') #{__("Otra1")}
+                      th(width='5%') #{__("Otra2")}
+                      th(width='5%') #1
+                      th(width='5%') #2
+                      th(width='5%') #3
+                      th(width='5%') #4
+                      th(width='5%') #5
+                  tbody
+                    
+block script
+  // Dropzone Js
+  script(src='/assets/plugins/dropzone/dist/dropzone.js')
+  script(src='/assets/plugins/moment/moment.js')
+  script(src='/assets/plugins/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js')
+  script.
+    var hidesize = false;
+    $('.select-fabric').select2();
+    $('.select-work').select2();
+    $('.order-complete').select2();
+
+    var order = (!{JSON.stringify(order)});
+    var work = (!{JSON.stringify(work)});
+    
+    $('.add-fabric-panel').on('click','a.panel-close', function () { 
+      $(this).parents('.add-fabric-panel').fadeOut();
+    });
+    $('.update-fabric-panel').on('click','a.panel-close', function () { 
+      $(this).parents('.update-fabric-panel').fadeOut();
+    });
+    $('.update-order-info-panel').on('click','a.panel-close', function() {
+      $(this).parents('.update-order-info-panel').fadeOut();
+    })
+    $('.add-fabric').on('click', function(){
+      $('.add-fabric-panel').fadeIn();
+    })
+
+    $(document).ready(function(){
+      loadAllFabrics();
+    })   
+    
+    //Load All fabrics of given order
+    var loadAllFabrics = function(){
+      $.ajax({
+        url: '/dashboard/order/order_fabric_list',
+        type: 'POST',
+        data: {
+          id: $('.add-fabric-form .order-id').val()
+        },
+        success: function(result){
+          if(result.isSuccess){
+            var list = result.list, hm = '';
+            for(let i = 0; i < list.length; i++){
+              hm += 
+                  `<tr data-id='`+list[i].id+`'>
+                    <td rowspan='3', width='2%', style='vertical-align: middle;'>
+                      <h5>
+                        <b> `+(i+1)+`</b></h5>
+                    </td>
+                    </td>
+                  <tr data-id='`+list[i].id+`'>
+                    <td width='15%'> Type </td>
+                    <td width='15%'> `+list[i].fabrictypecodename+`</td>
+                    <td width='15%'> Fabric </td>
+                    <td> `+list[i].fabriccodename+`</td>
+                  <tr data-id='`+list[i].id+`'>
+                    <td> Width </td>
+                    <td> `+list[i].width+`</td>
+                    <td> Weight</td>
+                    <td> `+list[i].weight+`</td>`;
+            }
+            $('.fabrics-table-body').html(hm);
+            refreshEvent();
+          }else{
+            alert('Cannot load Fabric list');
+          }
+        }
+      })
+    }
+    //Add New fabric
+    $('.add-fabric-form').submit(function(e){
+      e.preventDefault();
+      $.ajax({
+        url: '/dashboard/order/order_fabric_add',
+        type: 'POST',
+        data: {
+          id: $('.add-fabric-form .order-id').val(),
+          yarncode: $('.add-fabric-form .new-yarn').val(),
+          yarncodename: $('.add-fabric-form .new-yarn').select2('data')[0].text,
+          typecode: $('.add-fabric-form .new-type').val(),
+          typecodename: $('.add-fabric-form .new-type').select2('data')[0].text,
+          fabriccode: $('.add-fabric-form .new-fabric').val(),
+          fabriccodename: $('.add-fabric-form .new-fabric').select2('data')[0].text,
+          width: $('.new-width').val(),
+          weight: $('.new-weight').val()
+        },
+        success: function(result){
+          if(result.isSuccess){            
+            loadAllFabrics();
+            $('.new-width').val('');
+            $('.new-weight').val('');
+          }else{
+            alert('There `s already same Type & Fabric. Please check detail.');
+          }
+        }
+      })
+    })
+
+    //Add New fabric
+    $('.update-fabric-form').submit(function(e){
+      e.preventDefault();
+      $.ajax({
+        url: '/dashboard/order/order_fabric_update',
+        type: 'POST',
+        data: {
+          id: $('.update-fabric-form .order-id').val(),
+          typecode: $('.update-fabric-form .new-type').val(),
+          typecodename: $('.update-fabric-form .new-type').select2('data')[0].text,
+          fabriccode: $('.update-fabric-form .new-fabric').val(),
+          fabriccodename: $('.update-fabric-form .new-fabric').select2('data')[0].text,
+          width: $('.update-fabric-form .new-width').val(),
+          weight: $('.update-fabric-form .new-weight').val()
+        },
+        success: function(result){
+          if(result.isSuccess){            
+            loadAllFabrics();
+            $('.update-fabric-panel').fadeOut();
+          }else{
+            alert('There `s already same Type & Fabric. Please check detail.');
+          }
+        }
+      })
+    })
+
+    $('.update-fabric-form .remove').on('click', function(){
+      $.ajax({
+        url: '/dashboard/order/order_fabric_remove',
+        type: 'POST',
+        data: {
+          id: $('.update-fabric-form .order-id').val(),
+        },
+        success: function(result){
+          if(result.isSuccess){
+            loadAllFabrics();
+            $('.update-fabric-panel').fadeOut();
+          }else{
+            alert('Cannot remove Fabric.')
+          }
+        }
+      })
+    })
+
+    var refreshEvent = function(){
+      $('.fabrics-table-body tr').off();
+      $('.fabrics-table-body tr').on('click', function(){
+        var id = ($(this).data('id'));
+        $.ajax({
+          url: '/dashboard/order/order_fabric_get',
+          type: 'POST',
+          data: {
+            id: id
+          },
+          success: function(result){
+            if(result.isSuccess){
+              $('.update-fabric-form .order-id').val(result.fabric.id),
+              $('.update-fabric-form .new-yarn').val(result.fabric.yarncode).trigger('change'),
+              $('.update-fabric-form .new-type').val(result.fabric.fabrictypecode).trigger('change'),
+              $('.update-fabric-form .new-fabric').val(result.fabric.fabriccode).trigger('change'),
+              $('.update-fabric-form .new-width').val(result.fabric.width),
+              $('.update-fabric-form .new-weight').val(result.fabric.weight)
+              $('.update-fabric-panel').fadeIn();
+              $('.add-fabric-panel').fadeOut();
+            }else{
+              alert('Cannot load Fabric.');
+            }
+          }
+        })
+      });
+    }
+    refreshEvent();
+    
+    //Order Detail
+    $('.add-detail-panel').on('click','a.panel-close', function () { 
+      $(this).parents('.add-detail-panel').fadeOut();
+    });
+    $('.update-detail-panel').on('click','a.panel-close', function () { 
+      $(this).parents('.update-detail-panel').fadeOut();
+    });
+    $('.add-detail').on('click', function(){
+      $('.add-detail-panel').fadeIn();
+      $('.update-detail-panel').fadeOut();
+    })
+    $(".new-shipdate").datetimepicker({
+      format: 'YYYY-MM-DD',
+      showClear: true
+    });
+    var b1 = true;
+    var b2 = true;
+    $('.new-color').on('change', function(){
+      if(b2){
+        b1 = false;
+        $('.new-colorcode').val($(this).val()).trigger('change');        
+      }
+      b2 = true;
+    })
+    $('.new-colorcode').on('change', function(){
+      if(b1){
+        b2 = false;
+        $('.new-color').val($(this).val()).trigger('change');
+      }
+      b1 = true;
+    })
+
+    var getAllOrderDetail = function(){
+      $.ajax({
+        url: '/dashboard/order/order_detail_all',
+        type: 'POST',
+        data: {
+          id: order.id
+        },
+        success: function(result){
+          if(result.isSuccess){
+            if(result.list.length > 0) {
+              hidesize = true;
+              $('.trsgroup').hide();
+            }
+            var ht = '', t = [], total = 0;
+            for(var ppp = 0; ppp < 11; ppp++) t[ppp] = 0;
+            for(let i = 0; i < result.list.length; i++){
+              ht += `
+              <tr style='text-align: center;' data-id = `+result.list[i].id+`>
+                <td class='StringData'>`+result.list[i].style+`</td>
+                <td class='StringData'>`+result.list[i].po+`</td>
+                <td class='StringData'>`+result.list[i].shipdate+`</td>
+                <td class='StringData'>`+result.list[i].colorname+`</td>
+                <td class='StringData'>`+result.list[i].color+`</td>
+                <td class='NumericData'>`+result.list[i].s1+`</td>
+                <td class='NumericData'>`+result.list[i].s2+`</td>
+                <td class='NumericData'>`+result.list[i].s3+`</td>
+                <td class='NumericData'>`+result.list[i].s4+`</td>
+                <td class='NumericData'>`+result.list[i].s5+`</td>
+                <td class='NumericData'>`+result.list[i].s6+`</td>
+                <td class='NumericData'>`+result.list[i].s7+`</td>
+                <td class='NumericData'>`+result.list[i].s8+`</td>
+                <td class='NumericData'>`+result.list[i].s9+`</td>
+                <td class='NumericData'>`+result.list[i].s10+`</td>
+                <td class='NumericData'>`+getSizeSum(result.list[i])+`</td>
+                <td class='NumericData'>`+result.list[i].body+`</td>
+                <td class='NumericData'>`+result.list[i].trim+`</td>
+                <td class='NumericData'>`+(result.list[i].otra1?result.list[i].otra1:'')+`</td>
+                <td class='NumericData'>`+(result.list[i].otra2?result.list[i].otra2:'')+`</td>
+                <td>`+result.list[i].priorityname+`</td>`;                
+                for(var pp = 0; pp < work.length; pp++){
+                  if(work[pp].value == result.list[i].work){
+                    ht += `<td>`+work[pp].name+`</td>`;
+                  }
+                }
+                ht += `<td>`+(result.list[i].unit?result.list[i].unit:'')+`</td>`;
+                ht += `<td>`+(result.list[i].f1?result.list[i].f1:'')+`</td>`;
+                ht += `<td>`+(result.list[i].f2?result.list[i].f2:'')+`</td>`;
+                ht += `<td>`+(result.list[i].f3?result.list[i].f3:'')+`</td>`;
+                ht += `<td>`+(result.list[i].f4?result.list[i].f4:'')+`</td>`;
+                ht += `<td>`+(result.list[i].f5?result.list[i].f5:'')+`</td>`;
+                ht += `<td class="c_td"><input type="checkbox" class="c_box" data-id="`+result.list[i].id+`"></td>`;
+                ht += `</tr>`;
+                t[1] += Number(result.list[i].s1);
+                t[2] += Number(result.list[i].s2);
+                t[3] += Number(result.list[i].s3);
+                t[4] += Number(result.list[i].s4);
+                t[5] += Number(result.list[i].s5);
+                t[6] += Number(result.list[i].s6);
+                t[7] += Number(result.list[i].s7);
+                t[8] += Number(result.list[i].s8);
+                t[9] += Number(result.list[i].s9);
+                t[10] += Number(result.list[i].s10);
+                total += getSizeSum(result.list[i]);
+            }
+            ht += `<tr class="order-total"><td>Total</td><td/><td/><td/><td/>`;
+            for(var ppp = 1; ppp < 11; ppp++) {
+              ht += `<td>`+t[ppp]+`</td>`;
+            }
+            ht += `<td>`+total+`</td>`;
+            ht += `<td/><td/><td/><td/><td/><td/><td/><td/><td/><td/><td/><td/><td/>`;
+            $('.detailview tbody').html(ht);
+            refreshDeleteEvent();
+            refreshEvent2();            
+          }else{
+            alert('Cannot load details.');
+          }
+        }
+      })
+    }
+
+    var getSizeSum = function(arr){
+      var sum = 0;
+      for(var i = 1; i <=10; i++){
+        sum += arr['s'+i];
+      }
+      return sum;
+    }
+
+    getAllOrderDetail();
+
+    $('.add-detail-form').submit(function(e){
+      e.preventDefault();      
+      $.ajax({
+        url: '/dashboard/order/order_detail_add',
+        type: 'POST',
+        data:{
+          id: order.id,
+          style: $('.add-detail-form .new-style').val(),
+          po: $('.add-detail-form .new-po').val(),
+          shipdate: $('.add-detail-form .new-shipdate').val(),
+          color: $('.add-detail-form .new-color').val(),
+          colorname: $('.add-detail-form .new-color').select2('data')[0].text,
+          s1: $('.add-detail-form .new-size0').val()!=''?$('.add-detail-form .new-size0').val(): '0',
+          s2: $('.add-detail-form .new-size1').val()!=''?$('.add-detail-form .new-size1').val(): '0',
+          s3: $('.add-detail-form .new-size2').val()!=''?$('.add-detail-form .new-size2').val(): '0',
+          s4: $('.add-detail-form .new-size3').val()!=''?$('.add-detail-form .new-size3').val(): '0',
+          s5: $('.add-detail-form .new-size4').val()!=''?$('.add-detail-form .new-size4').val(): '0',
+          s6: $('.add-detail-form .new-size5').val()!=''?$('.add-detail-form .new-size5').val(): '0',
+          s7: $('.add-detail-form .new-size6').val()!=''?$('.add-detail-form .new-size6').val(): '0',
+          s8: $('.add-detail-form .new-size7').val()!=''?$('.add-detail-form .new-size7').val(): '0',
+          s9: $('.add-detail-form .new-size8').val()!=''?$('.add-detail-form .new-size8').val(): '0',
+          s10: $('.add-detail-form .new-size9').val()!=''?$('.add-detail-form .new-size9').val(): '0',
+          body: $('.add-detail-form .new-body').val(),
+          trim: $('.add-detail-form .new-trim').val(),
+          otra1: $('.add-detail-form .new-otra1').val(),
+          otra2: $('.add-detail-form .new-otra2').val(),
+          priority: $('.add-detail-form .new-priority').val(),
+          priorityname: $('.add-detail-form .new-priority').select2('data')[0].text,
+          work: $('.add-detail-form .new-work').val(),
+          unit: $('.add-detail-form .new-unit').val(),
+          f1: $('.add-detail-form .new-f1').val(),
+          f2: $('.add-detail-form .new-f2').val(),
+          f3: $('.add-detail-form .new-f3').val(),
+          f4: $('.add-detail-form .new-f4').val(),
+          f5: $('.add-detail-form .new-f5').val()
+        },
+        success: function(result){
+          if(result.isSuccess){
+            getAllOrderDetail();
+            $('.add-detail-form .new-style').val('');
+            $('.add-detail-form .new-po').val('');
+            $('.add-detail-form .new-shipdate').val('');
+            $('.add-detail-form .new-size0').val('');
+            $('.add-detail-form .new-size1').val('');
+            $('.add-detail-form .new-size2').val('');
+            $('.add-detail-form .new-size3').val('');
+            $('.add-detail-form .new-size4').val('');
+            $('.add-detail-form .new-size5').val('');
+            $('.add-detail-form .new-size6').val('');
+            $('.add-detail-form .new-size7').val('');
+            $('.add-detail-form .new-size8').val('');
+            $('.add-detail-form .new-size9').val('');
+            $('.add-detail-form .new-body').val('');
+            $('.add-detail-form .new-trim').val('');
+            $('.add-detail-form .new-unit').val('');
+            $('.add-detail-form .new-otra1').val('');
+            $('.add-detail-form .new-otra2').val('');
+            $('.add-detail-form .new-f1').val('');
+            $('.add-detail-form .new-f2').val('');
+            $('.add-detail-form .new-f3').val('');
+            $('.add-detail-form .new-f4').val('');
+            $('.add-detail-form .new-f5').val('');
+          }else{
+            alert('Cannot add detail. There`s already same PO & Color. Please check detail.')
+          }
+        }
+      })
+    })
+
+    $('.update-detail-form').submit(function(e){
+      e.preventDefault();      
+      $.ajax({
+        url: '/dashboard/order/order_detail_update',
+        type: 'POST',
+        data:{          
+          id: $('.update-detail-form .detail-id').val(),
+          style: $('.update-detail-form .new-style').val(),
+          po: $('.update-detail-form .new-po').val(),
+          shipdate: $('.update-detail-form .new-shipdate').val(),
+          color: $('.update-detail-form .new-color').val(),
+          colorname: $('.update-detail-form .new-color').select2('data')[0].text,
+          s1: $('.update-detail-form .new-size0').val(),
+          s2: $('.update-detail-form .new-size1').val(),
+          s3: $('.update-detail-form .new-size2').val(),
+          s4: $('.update-detail-form .new-size3').val(),
+          s5: $('.update-detail-form .new-size4').val(),
+          s6: $('.update-detail-form .new-size5').val(),
+          s7: $('.update-detail-form .new-size6').val(),
+          s8: $('.update-detail-form .new-size7').val(),
+          s9: $('.update-detail-form .new-size8').val(),
+          s10: $('.update-detail-form .new-size9').val(),
+          body: $('.update-detail-form .new-body').val(),
+          trim: $('.update-detail-form .new-trim').val(),
+          otra1: $('.update-detail-form .new-otra1').val(),
+          otra2: $('.update-detail-form .new-otra2').val(),
+          priority: $('.update-detail-form .new-priority').val(),
+          priorityname: $('.update-detail-form .new-priority').select2('data')[0].text,
+          work: $('.update-detail-form .new-work').val(),
+          unit: $('.update-detail-form .new-unit').val(),
+          f1: $('.update-detail-form .new-f1').val(),
+          f2: $('.update-detail-form .new-f2').val(),
+          f3: $('.update-detail-form .new-f3').val(),
+          f4: $('.update-detail-form .new-f4').val(),
+          f5: $('.update-detail-form .new-f5').val(),
+        },
+        success: function(result){
+          if(result.isSuccess){
+            getAllOrderDetail();
+            $('.update-detail-panel').fadeOut();
+          }else{
+            alert('Same PO & Color exist. Please check detail.')
+          }
+        }
+      })
+    })
+
+    $('.update-detail-form .remove').on('click', function(){
+      
+      $.ajax({
+        url: '/dashboard/order/order_detail_remove',
+        type: 'POST',
+        data: {
+          id: $('.update-detail-form .detail-id').val(),
+        },
+        success: function(result){
+          if(result.isSuccess){
+            getAllOrderDetail();
+            $('.update-detail-panel').fadeOut();
+          }else{
+            alert('Cannot remove Fabric.')
+          }
+        }
+      })
+    })
+
+    var refreshEvent2 = function(){      
+      $('.detailview tr').off();
+      $('.detailview tr').on('click', function(){
+        var id = ($(this).data('id'));
+        $.ajax({
+          url: '/dashboard/order/order_detail_get',
+          type: 'POST',
+          data: {
+            id: id
+          },
+          success: function(result){
+            if(result.isSuccess){
+              console.log(result.detail);
+              $('.update-detail-form .detail-id').val(result.detail.id);
+              $('.update-detail-form .new-style').val(result.detail.style);
+              $('.update-detail-form .new-po').val(result.detail.po);
+              $('.update-detail-form .new-shipdate').val(result.detail.shipdate);
+              $('.update-detail-form .new-color').val(result.detail.color).trigger('change');
+              $('.update-detail-form .new-size0').val(result.detail.s1);
+              $('.update-detail-form .new-size1').val(result.detail.s2);
+              $('.update-detail-form .new-size2').val(result.detail.s3);
+              $('.update-detail-form .new-size3').val(result.detail.s4);
+              $('.update-detail-form .new-size4').val(result.detail.s5);
+              $('.update-detail-form .new-size5').val(result.detail.s6);
+              $('.update-detail-form .new-size6').val(result.detail.s7);
+              $('.update-detail-form .new-size7').val(result.detail.s8);
+              $('.update-detail-form .new-size8').val(result.detail.s9);
+              $('.update-detail-form .new-size9').val(result.detail.s10);
+              $('.update-detail-form .new-body').val(result.detail.body);
+              $('.update-detail-form .new-trim').val(result.detail.trim);
+              $('.update-detail-form .new-otra1').val(result.detail.otra1);
+              $('.update-detail-form .new-otra2').val(result.detail.otra2);
+              $('.update-detail-form .new-priority').val(result.detail.priority?result.detail.priority: '-1').trigger('change');
+              $('.update-detail-form .new-work').val(result.detail.work).trigger('change');
+              $('.update-detail-form .new-unit').val(result.detail.unit);
+              $('.update-detail-form .new-f1').val(result.detail.f1);
+              $('.update-detail-form .new-f2').val(result.detail.f2);
+              $('.update-detail-form .new-f3').val(result.detail.f3);
+              $('.update-detail-form .new-f4').val(result.detail.f4);
+              $('.update-detail-form .new-f5').val(result.detail.f5);
+              $('.update-detail-panel').fadeIn();
+              $('.add-detail-panel').fadeOut();
+            }else{
+              alert('Cannot load Detail.');
+            }
+          }
+        })
+      });
+    }
+    refreshEvent2();
+
+    var myDropzone = new Dropzone("#frmFileUpload.dropzone", { url: "/dashboard/order/order_image_add"});
+    myDropzone.on("complete", function(file) {
+       $.ajax({
+        url: '/dashboard/order/order_by_id',
+        type: 'POST',
+        data: {
+          id: order.id
+        },
+        success: function(result){          
+          if(result.isSuccess){
+            let files = result.order.files.split(',');
+            var ht = '<div style="width: '+210*files.length+'px;">';
+            for(let i = 0; i < files.length; i++){
+              ht += "<div style='display:inline-block;'>";
+              ht += "<img src='/uploads/order/image/"+files[i]+"' style='height:195px; width:200px; margin-left: 5px;'>";
+              ht += '<i class="material-icons delete-icon" data-name="'+files[i]+'")>delete</i>';
+              ht += "</div>";
+            }
+            ht+='</div>';
+            $('.image-slide').html(ht);
+          }else{
+            alert('Cannot load image data');
+          }
+        }
+      });
+    });
+
+    function validateForm(){
+      var result = confirm("Want to delete?");      
+      return result;
+    }
+
+    //Delete Image
+    var refreshDelete = function(){
+      $('.delete-icon').off();
+      $('.delete-icon').on('click', function(){
+        let name = $(this).data('name');
+        $.ajax({
+          url: '/dashboard/order/image_delete',
+          type: 'POST',
+          data: {
+            name: name,
+            id: order.id
+          },
+          success: function(result){
+            if(result.isSuccess){
+              $.ajax({
+                url: '/dashboard/order/order_by_id',
+                type: 'POST',
+                data: {
+                  id: order.id
+                },
+                success: function(result){
+                  if(result.isSuccess){
+                    let files = result.order.files.split(',');
+                    var ht = '<div style="width: '+210*files.length+'px;">';
+                    for(let i = 0; i < files.length; i++){
+                      ht += "<div style='display:inline-block;'>";
+                      ht += "<img src='/uploads/order/image/"+files[i]+"' style='height:195px; width:200px; margin-left: 5px;'>";
+                      ht += '<i class="material-icons delete-icon" data-name="'+files[i]+'")>delete</i>';
+                      ht += "</div>";
+                    }
+                    ht+='</div>';
+                    $('.image-slide').html(ht);
+                  }else{
+                    alert('Cannot load image data');
+                  }
+                  refreshDelete();
+                }
+              })
+            }
+          }
+        })
+      })
+    }
+    refreshDelete();
+
+
+    //Material Margin
+    $('.select-s-group').select2();
+    $('.select-p-group').select2();
+    $('.select-f-group').select2();
+    var pgrouplist, fgrouplist, sgrouplist;
+    var loadGroup = function(){
+      $.ajax({
+        url: '/dashboard/order/group_list',
+        type: 'POST',
+        data: {
+          id: order.buyer
+        },
+        success: function(result){
+          if(result.isSuccess){
+              $(".select-s-group").select2("destroy");
+              $('.select-s-group').html("");
+              $('.select-s-group').append(
+                  '<option value="-1">Not Selected</option>'
+              );
+              sgrouplist = result.size;
+              $.each(result.size, function(index, value) {                
+                $('.select-s-group').append(
+                  '<option value="' + result.size[index].id + '">' + result.size[index].name + '</option>'
+                );
+              });
+              $(".select-s-group").select2();
+
+            //ProductGroup select2
+            //for(let i = 0; i < result.product.length; i++){
+              $(".select-p-group").select2("destroy");
+              $('.select-p-group').html("");
+              $('.select-p-group').append(
+                  '<option value="-1">Not Selected</option>'
+              );
+              pgrouplist = result.product;
+              fgrouplist = result.finish
+              $.each(result.product, function(index, value) {                
+                $('.select-p-group').append(
+                  '<option value="' + result.product[index].id + '">' + result.product[index].name + '</option>'
+                );
+              });
+              $(".select-p-group").select2();
+            //}
+            //FinishGroup select2
+            //for(let i = 0; i < result.finish.length; i++){
+              $(".select-f-group").select2("destroy");
+              $('.select-f-group').html("");
+              $('.select-f-group').append(
+                  '<option value="-1">Not Selected</option>'
+              );
+              $.each(result.finish, function(index, value) {
+                $('.select-f-group').append(
+                  '<option value="' + result.finish[index].id + '">' + result.finish[index].name + '</option>'
+                );
+              });
+              $(".select-f-group").select2();
+            //}
+          }else{
+            alert('Cannot load group. Try again.');
+          }
+        }
+      })
+    }
+    loadGroup();
+
+    $('.update-order').on('click', function(){
+      $('.update-order-panel').fadeIn();
+      $('.select-s-group').val(order.sizegroup).trigger('change');
+      $('.select-p-group').val(order.productgroup).trigger('change');
+      $('.select-f-group').val(order.finishgroup).trigger('change');
+      $('.fabric-margin').val(order.fabricmargin);
+      $('.material-margin').val(order.materialmargin);
+      $('.sew-margin').val(order.sewmargin);
+    })
+
+    $('.update-order-panel').on('click','a.panel-close', function () { 
+      $(this).parents('.update-order-panel').fadeOut();
+    });
+
+    $('.update-order-form').submit(function(e){
+      e.preventDefault();
+      let pcode, fcode;
+      for(var i = 0; i < pgrouplist.length; i++){
+        if(pgrouplist[i].id == $('.select-p-group').val()) pcode = pgrouplist[i].code;
+      }
+      for(var i = 0; i < fgrouplist.length; i++){
+        if(fgrouplist[i].id == $('.select-f-group').val()) fcode = fgrouplist[i].code;
+      }
+      let scode = '', sgroup = '';
+      for(var i = 0; i < sgrouplist.length; i++){
+        if(sgrouplist[i].id == $('.select-s-group').val()) scode = sgrouplist[i].code;
+      }
+      sgroup = $('.select-s-group').val();      
+      $.ajax({
+        url: '/dashboard/order/update_material_group',
+        type: 'POST',
+        data: {
+          pgroup: $('.select-p-group').val(),
+          fgroup: $('.select-f-group').val(),
+          sgroup: sgroup,
+          pname: pcode,
+          fname: fcode,
+          sname: scode,
+          fmargin: $('.fabric-margin').val(),
+          mmargin: $('.material-margin').val(),
+          smargin: $('.sew-margin').val(),
+          id: order.id
+        },
+        success: function(data){
+          if(data.isSuccess){
+            order.sizegroup = $('.select-s-group').val();
+            order.productgroup = $('.select-p-group').val();
+            order.finishgroup = $('.select-f-group').val();
+            $('.tdsgroup').html($('.select-s-group').select2('data')[0].text);
+            $('.tdpgroup').html($('.select-p-group').select2('data')[0].text);
+            $('.tdfgroup').html($('.select-f-group').select2('data')[0].text);
+            $('.tdfmargin').html($('.fabric-margin').val() + ' %');
+            $('.tdmmargin').html($('.material-margin').val() + ' %');
+            $('.tdsmargin').html($('.sew-margin').val() + '%');
+            $('.update-order-panel').fadeOut();
+          }else{
+            alert('Cannot update order detail. Contact support team.');
+          }
+        }
+      })
+    })
+
+    //Updat Order detail - Extra work
+    $('.update-order-info').on('click', function(){
+      $('.update-order-info-panel').fadeIn();
+      $('.order-product').val(order.product);
+      $('.order-season').val(order.season);
+      $('.order-qty').val(order.quantity);
+      $('.order-amount').val(order.amount);
+      $('.order-unit').val(order.price);
+      $('.order-style').val(order.style);      
+      $('.order-complete').val(order.complete=="1"?"1":"0").trigger('change');
+    });
+
+    $('.update-order-info-form').submit(function(e){
+      e.preventDefault();
+      $.ajax({
+        url: '/dashboard/order/order_update_2',
+        type: 'POST',
+        data: {
+          id: order.id,
+          product: $('.order-product').val(),
+          season: $('.order-season').val(),
+          qty: $('.order-qty').val(),
+          amount: $('.order-amount').val(),
+          unit: $('.order-unit').val(),
+          style: $('.order-style').val(),
+          complete: $('.order-complete').val()
+        },
+        success: function(result){
+          console.log(result);
+          if(result.isSuccess){
+            $('.td-product').html($('.order-product').val());
+            $('.td-season').html($('.order-season').val());
+            $('.td-quantity').html($('.order-qty').val());
+            $('.td-amount').html($('.order-amount').val());
+            $('.td-unit').html($('.order-unit').val());
+            $('.td-style').html($('.order-style').val());
+            $('.td-complete').html($('.order-complete').select2('data')[0].text);
+            order.product = $('.order-product').val();
+            order.season = $('.order-season').val();
+            order.quantity = $('.order-qty').val();
+            order.amount = $('.order-amount').val();
+            order.price = $('.order-unit').val();
+            order.style = $('.order-style').val();
+            order.complete = $('.order-complete').val();
+            $('.update-order-info-panel').fadeOut();
+          }else{
+            alert('Cannot update Order detail. Please contact support team.');
+          }
+        }
+      })
+    })
+
+    var uploadExcel = function(){
+      var result = confirm("Want to Upload this file?");
+      if (result) {
+        var formData = new FormData();
+        formData.append('excel', document.getElementsByClassName('inputexcelfile')[0].files[0]);
+        formData.append('id', order.id);
+        var request = new XMLHttpRequest();
+        request.open('POST', '/dashboard/orderdetail/excel_upload');        
+        request.onreadystatechange = function() {
+          if (request.readyState === 4) {
+            var response = JSON.parse(request.responseText);
+            if(response.isSuccess == true){
+              alert(response.fails);
+              getAllOrderDetail();
+            }else{
+              alert('Failed.');              
+              getAllOrderDetail();
+            }
+          }
+        }
+        request.send(formData);
+      }
+    }
+
+    //Delete Order Detail
+    var removeQueue = [];
+    var refreshDeleteEvent = function(){
+      $('.c_td').on('click', function(e){
+        $(this).children('.c_box')[0].click();
+        e.stopPropagation();
+      })
+      $('.c_box').on("click", function(e){        
+        e.stopPropagation();
+        var id = $(this).data('id');
+        if($(this).prop('checked') == true){
+          if(!removeQueue.includes(id))
+            removeQueue.push(id);
+        }else{
+          if(removeQueue.includes(id)){
+            removeQueue.splice(removeQueue.indexOf(id), 1);
+          }
+        }
+        console.log(removeQueue);
+      })
+    }
+
+    $('.remove-po').on('click', function(){
+      $.ajax({
+        url: '/dashboard/order/order_detail_remove_all',
+        type: 'POST',
+        data: {
+          ids: JSON.stringify(removeQueue)
+        },
+        success: function(res){
+          if(res.isSuccess){
+            getAllOrderDetail();
+          }else{
+          }
+        }
+      })
+    });
